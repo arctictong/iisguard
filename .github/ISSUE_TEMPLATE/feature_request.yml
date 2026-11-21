@@ -1,0 +1,28 @@
+name: ขอฟีเจอร์
+description: อยากได้อะไรเพิ่ม และทำไมถึงสำคัญกับคุณ
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: อยากให้ทำอะไร
+      description: เล่าเป็นปัญหาที่เจอ ดีกว่าบอกเป็นปุ่ม
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: ตอนนี้แก้ยังไงอยู่
+    validations:
+      required: false
+  - type: dropdown
+    id: prio
+    attributes:
+      label: สำคัญแค่ไหน
+      options:
+        - ทำให้ใช้ไม่ได้เลย
+        - ทำให้เสียเวลามาก
+        - แค่จะดีกว่านี้
+    validations:
+      required: true

@@ -1,0 +1,42 @@
+name: ใช้งานไม่เข้าใจ
+description: ข้อความหรือปุ่มไม่ชัด ติดขั้นตอนไหน ไม่รู้ว่าจะทำอะไรต่อ
+title: "[ux] "
+labels: ["usability"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        อันนี้สำคัญที่สุดสำหรับรุ่นทดสอบ — บอกตามจริงว่าตอนนั้นคิดอะไรอยู่ ไม่ต้องเกรงใจ
+  - type: textarea
+    id: doing
+    attributes:
+      label: ตอนนั้นกำลังจะทำอะไร
+      description: เช่น "อยากดูว่า bot ตัวไหนยิงเยอะสุด" หรือ "อยากบล็อค IP นี้"
+    validations:
+      required: true
+  - type: textarea
+    id: stuck
+    attributes:
+      label: ติดตรงไหน / ไม่เข้าใจอะไร
+    validations:
+      required: true
+  - type: textarea
+    id: better
+    attributes:
+      label: คิดว่าควรพูดหรือควรเป็นแบบไหน
+      description: ข้อความที่อยากเห็นบนปุ่ม/หัวข้อ หรือลำดับที่อยากให้เป็น
+    validations:
+      required: false
+  - type: input
+    id: page
+    attributes:
+      label: อยู่หน้าไหน
+      placeholder: หน้าแรก / setup / rules / หน้าต่างยืนยัน
+    validations:
+      required: false
+  - type: textarea
+    id: shot
+    attributes:
+      label: ภาพหน้าจอ (ลากมาวางได้)
+    validations:
+      required: false

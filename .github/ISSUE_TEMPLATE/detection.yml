@@ -1,0 +1,43 @@
+name: ตัดสินผิด (bot / ไม่ใช่ bot)
+description: โปรแกรมจัดกลุ่มผิด บล็อคคนจริง หรือปล่อย bot ผ่าน
+title: "[detect] "
+labels: ["detection"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: แบบไหน
+      options:
+        - บล็อค/เฝ้าดูคนจริง (false positive)
+        - ปล่อย bot ผ่าน (false negative)
+        - จัดกลุ่มผิด (เช่น รวมหลายเรื่องเป็นเรื่องเดียว)
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: log 2-5 บรรทัดที่เกี่ยวข้อง
+      description: ตัด IP จริงหรือเปลี่ยนตัวเลขได้ แต่เก็บ path, status, UA, เวลาไว้
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: verdict
+    attributes:
+      label: โปรแกรมให้ผลว่าอะไร
+      placeholder: ควรบล็อค / เฝ้าดู / ข้อมูล + ชื่อเรื่องที่แสดง
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: ทำไมถึงคิดว่าโปรแกรมผิด
+    validations:
+      required: false
+  - type: checkboxes
+    id: safe
+    attributes:
+      label: ก่อนส่ง
+      options:
+        - label: ฉันตัดข้อมูลลูกค้า/IP จริงออกแล้ว
+          required: true

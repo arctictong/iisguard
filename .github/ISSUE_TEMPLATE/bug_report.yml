@@ -1,0 +1,69 @@
+name: แจ้งบั๊ก
+description: โปรแกรมพัง ทำงานผิด หรือทำให้เว็บมีปัญหา
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ขอบคุณที่ทดสอบครับ — ข้อมูลด้านล่างช่วยให้หาสาเหตุได้เร็ว
+        **อย่าแนบ `web.config` ทั้งไฟล์** ถ้ามีข้อมูลลูกค้า ให้ตัดเฉพาะส่วนที่ใส่กฎ
+  - type: textarea
+    id: what
+    attributes:
+      label: เกิดอะไรขึ้น
+      description: เล่าเป็นขั้นตอนสั้น ๆ ว่าทำอะไร แล้วเห็นอะไร
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: ที่คาดว่าจะเกิด
+    validations:
+      required: false
+  - type: dropdown
+    id: mode
+    attributes:
+      label: โหมดตอนที่เกิด
+      options:
+        - เฝ้าดู (dry-run)
+        - เปิดการป้องกัน (enforce)
+        - ยังไม่ได้เลือกโหมด
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows เวอร์ชัน
+      placeholder: Windows Server 2022 / Windows Server 2025 / Windows 11
+    validations:
+      required: true
+  - type: input
+    id: iis
+    attributes:
+      label: IIS เวอร์ชัน และมี URL Rewrite ไหม
+      placeholder: IIS 10 + URL Rewrite 2.1
+    validations:
+      required: false
+  - type: textarea
+    id: error
+    attributes:
+      label: ข้อความ error / รหัส
+      description: เช่น 500.19, 0x80070021, หรือข้อความในหน้าต่างโปรแกรม
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: webconfig
+    attributes:
+      label: ส่วนของ web.config ที่เกี่ยวข้อง (ตัดข้อมูลอ่อนไหวออก)
+      render: xml
+    validations:
+      required: false
+  - type: checkboxes
+    id: safe
+    attributes:
+      label: ก่อนส่ง
+      options:
+        - label: ฉันเอา IP / โดเมน / ข้อมูลลูกค้าออกจากข้อความแล้ว
+          required: true
