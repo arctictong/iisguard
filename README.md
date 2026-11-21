@@ -4,6 +4,8 @@
 
 > **สถานะ: รุ่นทดสอบ (beta)** — ค่าเริ่มต้นเป็นโหมดเฝ้าดู (dry-run) ไม่เขียนไฟล์ใด ๆ
 
+หน้าแนะนำ (มีปุ่มดาวน์โหลดและวิธีใช้ย่อ): https://iisguard-bot-iis-log-iisguard-windows-x64-rkz552x8ez.openbot.site
+
 ## ดาวน์โหลด
 
 ไฟล์ zip อยู่ใน [Releases](../../releases/latest) — Windows x64, ไฟล์เดียว ไม่ต้องติดตั้ง .NET
