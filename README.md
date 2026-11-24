@@ -1,125 +1,132 @@
 # IISGuard
 
-อ่าน IIS log บนเครื่องคุณ ให้คะแนน bot / crawler / scraper แล้วบอกว่าเรื่องไหนควรสนใจ — และบล็อคได้เมื่อคุณสั่ง
+Reads your IIS logs, scores bots / crawlers / scrapers and tells you what is worth a look — and can block them when you say so.
 
-> **สถานะ: รุ่นทดสอบ (beta)** — ค่าเริ่มต้นเป็นโหมดเฝ้าดู (dry-run) ไม่เขียนไฟล์ใด ๆ
+> **Status: beta** — the default is watch-only (dry run). Nothing is written until you enable enforcement.
 
-หน้าแนะนำ (ปุ่มดาวน์โหลด + วิธีใช้ย่อ): https://iisguard-bot-iis-log-iisguard-windows-x64-rkz552x8ez.openbot.site
+Landing page (download + quick start): https://iisguard-bot-iis-log-iisguard-windows-x64-rkz552x8ez.openbot.site
 
-## ดาวน์โหลด
+Other language: [ภาษาไทย](README.th.md)
 
-ไฟล์ zip อยู่ใน [Releases](../../releases/latest) — Windows x64, ไฟล์ single-file ไม่ต้องติดตั้ง .NET
+## Download
 
-## ภาษา
+The zip is attached to [Releases](../../releases/latest) — Windows x64, single file, no .NET install needed.
 
-- หน้าเว็บมีปุ่ม **EN / ไทย** ที่หัวหน้า (จำค่าไว้ในเบราว์เซอร์) หรือเปิดด้วย `?lang=en`
-- console, Windows Event Log และ log ของ scheduled task ยังเป็นภาษาอังกฤษโดยตั้งใจ — console ของ 2012 R2 มักไม่มีฟอนต์ไทยแล้วพิมพ์เป็น `?`
-- README ภาษาอังกฤษ: [README.en.md](README.en.md)
-
-![แดชบอร์ด (ไทย)](docs/img/dashboard-th.png)
-![หน้ากฎ (อังกฤษ)](docs/img/config-en.png)
-
-## คำศัพท์
-
-| อังกฤษ | ไทย | ความหมาย |
-|---|---|---|
-| Block | บล็อก | เขียนกฎปฏิเสธ IP / UA นั้น |
-| Throttle | จำกัดความเร็ว | จำกัดแทนการบล็อค (ค่าเริ่มต้นไม่บังคับใช้) |
-| Observe | เฝ้าดู | บันทึกอย่างเดียว ไม่แก้อะไร |
-| Decision | การตัดสิน | ผลตัดสินของ engine ต่อหนึ่ง entity |
-| Dry run | ซ้อม | คำนวณครบแต่ไม่เขียนไฟล์ |
-| Score | คะแนน | คะแนนเสี่ยง 0–100 |
-| Never-block | ห้ามบล็อค | CIDR/IP ที่ห้ามบล็อคเด็ดขาด |
-
-ใน zip มี:
+Inside the zip:
 
 ```
-iisguard-app.exe              ตัวโปรแกรม (self-contained)
-appsettings.json              ค่าตั้ง (LogDirectory, Port, WebConfigPath, Enforcement)
-web.config                    ตัวอย่าง hosting ถ้าเอา dashboard ไปไว้ใต้ IIS
-wwwroot\fonts\*.woff2         ฟอนต์ Noto Sans Thai ที่ฝังมา
-scripts\install-service.ps1   ติดตั้งเป็น Windows Service
-scripts\uninstall-service.ps1 ถอน service
-README-อ่านก่อนใช้งาน.txt      วิธีใช้ภาษาไทย
+iisguard-app.exe              the app (self-contained)
+appsettings.json              settings (LogDirectory, Port, WebConfigPath, Enforcement)
+web.config                    sample hosting config if the dashboard runs under IIS
+wwwroot\fonts\*.woff2         bundled Noto Sans Thai fonts
+scripts\install-service.ps1   install as a Windows Service
+scripts\uninstall-service.ps1 remove the service
+README-อ่านก่อนใช้งาน.txt      Thai quick start
 ```
 
-## เริ่มใช้ 3 ขั้น
+## Quick start (3 steps)
 
-1. แตก zip ไว้ที่ใดก็ได้บนเครื่องที่รัน IIS แล้วดับเบิลคลิก `iisguard-app.exe`
-2. เปิดเบราว์เซอร์ที่ `http://127.0.0.1:8787`
-3. หน้าเริ่มใช้งานจะหาโฟลเดอร์ log ให้เอง ถ้าไม่พบให้ชี้ path ตามที่โปรแกรมบอก แล้วเลือกโหมด **เฝ้าดู**
+1. Unzip anywhere on the IIS machine and double-click `iisguard-app.exe`.
+2. Open `http://127.0.0.1:8787`.
+3. The setup page finds the log folder by itself. If it cannot, point it at the path the app suggests, then pick **watch** mode.
 
-ถ้าย้ายเฉพาะ exe ต้องคัดลอก `wwwroot` ไปด้วย (ฟอนต์) และ `appsettings.json`
+If you move only the exe, copy `wwwroot` (fonts) and `appsettings.json` with it.
 
-## ต้องมี
+## Requirements
 
 | | |
 |---|---|
-| OS | **Windows Server 2012 R2 หรือใหม่กว่า** (x64) — ทดสอบแล้วบน 2012 R2 และ 2025 |
-| IIS | เปิด W3C logging (ทดสอบบน IIS 8 และ IIS 10) |
-| URL Rewrite | ไม่บังคับ — ถ้าไม่มีหรือ `ipSecurity` ถูกล็อค โปรแกรมจะใช้ URL Rewrite; ถ้าไม่มีเลยจะใช้ `ipSecurity` |
-| สิทธิ์อ่าน log | ผู้ใช้ทั่วไปอ่าน log ได้ถ้าได้รับสิทธิ์ที่โฟลเดอร์ log (ค่าเริ่มต้นของ IIS อนุญาตเฉพาะ Administrator) |
-| สิทธิ์เขียน config | การบล็อคจริงต้องรันด้วยสิทธิ์ที่เขียน `web.config` ของ site ได้ |
-| เบราว์เซอร์ | ต้องรองรับ `fetch` และ ES6 — **IE ใช้ไม่ได้** (Chrome/Edge รุ่นใหม่ หรือ Edge 109 บน 2012 R2) |
+| OS | **Windows Server 2012 R2 or newer** (x64) — tested on 2012 R2 and 2025 |
+| IIS | W3C logging enabled (tested on IIS 8 and IIS 10) |
+| URL Rewrite | Optional — when missing or `ipSecurity` is locked, the app uses URL Rewrite; if neither is available it falls back to `ipSecurity` |
+| Log read access | A standard user can read logs only if granted on the log folder (IIS allows Administrators by default) |
+| Config write access | Real blocking needs an account that can write the site's `web.config` |
+| Browser | Needs `fetch` and ES6 — **IE will not work** (current Chrome/Edge, or Edge 109 on 2012 R2) |
 
-## ติดตั้งเป็น Windows Service
+## Language
+
+The dashboard ships in Thai and has a built-in English switch:
+
+- Click the **EN / ไทย** button in the header, or
+- open any page with `?lang=en` (or `?lang=th`)
+- the choice is remembered per browser (localStorage)
+
+Console output, the Windows Event Log and the scheduled-task log stay in English on purpose: Windows Server 2012 R2 consoles often have no Thai font and print `?` instead.
+
+![Dashboard (English)](docs/img/dashboard-en.png)
+
+![Rules page (English)](docs/img/config-en.png)
+
+## Install as a Windows Service
 
 ```powershell
-# PowerShell แบบ Administrator
+# Administrator PowerShell
 powershell -ExecutionPolicy Bypass -File .\scripts\install-service.ps1
 ```
 
-ติดตั้งไว้ที่ `%ProgramData%\IISGuard` และสตาร์ทอัตโนมัติ ตรวจสถานะ:
+It installs to `%ProgramData%\IISGuard`, starts automatically:
 
 ```powershell
 Get-Service IISGuard
 ```
 
-ถอน (เพิ่ม `-RemoveData` เพื่อลบฐานข้อมูลและ backup ด้วย):
+Remove it (add `-RemoveData` to delete the database and backups too):
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\uninstall-service.ps1 -RemoveData
 ```
 
-## ความปลอดภัยเป็นค่าเริ่มต้น
+## Safe by default
 
-- โหมดแรกคือเฝ้าดู — ไม่แก้ config
-- ปฏิเสธการบล็อค IP วงใน / loopback / ช่วง Googlebot
-- หลังเขียนกฎ: อ่านไฟล์กลับยืนยัน และถ้าตั้ง `VerifyUrl` แล้วเว็บตอบ 5xx จะย้อน backup ให้เอง
-- กฎมีอายุ 1 ชม. → 24 ชม. → 7 วัน แล้วถอนเอง
-- ถอนกฎแล้วไฟล์ config กลับสภาพเดิม (ไม่เหลือ `<rewrite><rules /></rewrite>` ค้าง)
-- ไม่มี telemetry — dashboard เปิดเฉพาะ `127.0.0.1`
+- First mode is watch-only — no config changes.
+- Refuses to block private / loopback ranges and the Googlebot range.
+- After writing a rule it re-reads the file; when `VerifyUrl` is set and the site answers 5xx it restores the backup automatically.
+- Rules expire after 1 h → 24 h → 7 days and remove themselves.
+- Removing a rule restores the original file (no leftover `<rewrite><rules /></rewrite>`).
+- No telemetry — the dashboard listens on `127.0.0.1` only.
 
-## ทดสอบกับอะไรแล้ว
+## Terminology (TH ↔ EN)
 
-| สภาพแวดล้อม | ผล |
+| English | Thai | Meaning |
+|---|---|---|
+| Block | บล็อก | Write a deny rule for that IP / UA |
+| Throttle | จำกัดความเร็ว | Limit rather than block (not applied by default) |
+| Observe | เฝ้าดู | Record only, change nothing |
+| Decision | การตัดสิน | The engine's verdict for one entity |
+| Dry run | ซ้อม | Compute everything, write nothing |
+| Score | คะแนน | 0–100 risk score |
+| Never-block | ห้ามบล็อค | CIDRs/IPs that can never be blocked |
+
+## Tested with
+
+| Environment | Result |
 |---|---|
-| Windows Server 2012 R2 + IIS 8 (Administrator) | ตรวจ `web.config` ของ site เองได้ · เขียนกฎบล็อคลงไฟล์จริง · เว็บยังได้ 200 · ถอนคืนแล้วไฟล์กลับสภาพเดิม · `install-service.ps1` → service Running และ dashboard ตอบ 200 |
-| Windows Server 2012 R2 (ผู้ใช้ทั่วไป) | อ่าน log ไม่ได้ → `/setup` แจ้ง "ไม่มีสิทธิ์อ่านโฟลเดอร์นี้" (ไม่ crash) |
-| Windows Server 2025 + IIS 10 | บล็อค IP ใน LAN ได้ 403 จริง ถอนคืนได้ เว็บไม่ล่ม |
-| log ตัวอย่าง 151,555 คำขอ/วัน | 53 การตัดสิน (ควรบล็อค 2, เฝ้าดู 10, ข้อมูล 41) |
-| `ipSecurity` ถูกล็อค | สลับไป URL Rewrite อัตโนมัติ XML ยังถูกต้อง |
+| Windows Server 2012 R2 + IIS 8 (Administrator) | Detects the site's own `web.config` · writes real block rules · site still answers 200 · undo restores the original file · `install-service.ps1` → service Running and dashboard 200 |
+| Windows Server 2012 R2 (standard user) | Cannot read logs → `/setup` explains "no permission to read this folder" (no crash) |
+| Windows Server 2025 + IIS 10 | Blocks a LAN IP with a real 403, undo works, site stays up |
+| Sample log, 151,555 requests/day | 53 decisions (2 should block, 10 watch, 41 info) |
+| `ipSecurity` locked | Switches to URL Rewrite automatically, XML stays valid |
 
-**ยังไม่ได้ทดสอบ:** Windows Server 2016/2019/2022, ARM, การบล็อคระดับ firewall, ตัวติดตั้ง MSI, การแจ้งเตือนออกนอกเครื่อง (อีเมล/Teams)
+**Not tested yet:** Windows Server 2016/2019/2022, ARM, firewall-level blocking, MSI installer, out-of-band notifications (email/Teams).
 
-## ข้อควรรู้เรื่อง 2012 R2
+## Notes for 2012 R2
 
-- โปรแกรมรันได้โดยไม่ต้องติดตั้ง .NET และไม่ต้องมี ESU
-- แต่ **Windows Server 2012 R2 หมดรอบซัพพอร์ตของ Microsoft ตั้งแต่ ต.ค. 2023** — ควรใช้กับเครื่องที่แยกเครือข่ายหรือมีมาตรการชดเชย
-- **.NET 8 หมดรอบซัพพอร์ต 10 พ.ย. 2026** — ถ้าต้องรองรับ 2012 R2 ระยะยาว ทางเลือกคือทำ build แยกบน .NET Framework 4.8 (Core engine ใช้ซ้ำได้ แต่ต้องเขียน host ใหม่) หรือย้ายไป Server 2016+
+- Runs without installing .NET and without ESU.
+- But **Windows Server 2012 R2 has been out of Microsoft support since Oct 2023** — use it on an isolated network or with compensating controls.
+- **.NET 8 goes out of support on 10 Nov 2026** — for long-term 2012 R2 support, build a separate .NET Framework 4.8 host (the Core engine is reusable) or move to Server 2016+.
 
-## ช่วยทดสอบ
+## Help test it
 
-เปิด issue ตามแบบฟอร์มที่เตรียมไว้:
+Open an issue with the prepared form:
 
-- [แจ้งบั๊ก](../../issues/new?template=bug_report.yml)
-- [ใช้งานไม่เข้าใจ / ข้อความกำกวม](../../issues/new?template=usability.yml)
-- [ตัดสินผิด (false positive / false negative)](../../issues/new?template=detection.yml)
-- [ขอฟีเจอร์](../../issues/new?template=feature_request.yml)
+- [Bug report](../../issues/new?template=bug_report.yml)
+- [Unclear wording / usability](../../issues/new?template=usability.yml)
+- [Wrong decision (false positive / negative)](../../issues/new?template=detection.yml)
+- [Feature request](../../issues/new?template=feature_request.yml)
 
-อย่าแนบ `web.config` ทั้งไฟล์ถ้ามีข้อมูลลูกค้า — ตัดเฉพาะส่วนที่ใส่กฎ
+Do not attach a full `web.config` if it contains customer data — redact everything except the rule section.
 
-## โครงสร้าง
+## Layout
 
 ```
 src/IISGuard.Core     parser, normalize, tailer, detection engine
@@ -128,7 +135,7 @@ src/IISGuard.App      service + SQLite + dashboard
 src/IISGuard.Tests    regression tests
 ```
 
-## สร้างเอง
+## Build from source
 
 ```powershell
 dotnet build IISGuard.sln -c Release
@@ -137,6 +144,6 @@ dotnet publish src/IISGuard.App -c Release -r win-x64 --self-contained true `
   -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o dist\iisguard
 ```
 
-## สัญญาอนุญาต
+## License
 
 MIT
